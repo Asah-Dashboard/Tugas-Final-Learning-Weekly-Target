@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyFlow - Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+        /* Dashboard Layout Improvements */
+        .container.dashboard-container {
+            max-width: 900px !important;
+        }
+        
+        /* Override container width for dashboard */
+        body .container {
+            max-width: 900px;
+        }
+
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        #progressText {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Pomodoro Timer Styles - Compact & Clean */
+        .pomodoro-container {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 0;
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.25);
+        }
+
+        .pomodoro-container h2 {
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pomodoro-timer {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .timer-mode-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .mode-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .timer-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-bg {
+            fill: none;
+            stroke: #e8e8e8;
+            stroke-width: 8;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke: #667eea;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-progress.work {
+            stroke: #667eea;
+        }
+
+        .timer-progress.shortBreak {
+            stroke: #f5576c;
+        }
+
+        .timer-progress.longBreak {
+            stroke: #4ecdc4;
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #333;
+            font-family: "Poppins", sans-serif;
+            line-height: 1;
+        }
+
+        .timer-text span {
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .pause-btn {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+        }
+
+        .pause-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .pomodoro-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .timer-status {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .timer-circle.pulsing {
+            animation: pulse 2s infinite;
+        }
+
+        /* Dashboard sections spacing */
+        .dashboard-section {
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/schedule">Atur Jadwal</a>
+                <a href="/tasks">Tugas</a>
+                <a href="/about">About</a>
+            </div>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </nav>
+
+        <h1>StudyFlow - Progres Mingguan</h1>
+
+        <div class="dashboard-content">
+            <!-- Pomodoro Timer Section -->
+            <div class="pomodoro-container dashboard-section">
+                <h2>🍅 Pomodoro Timer</h2>
+                <div class="pomodoro-timer">
+                    <div class="timer-mode-buttons">
+                        <button class="mode-btn active" data-mode="work">Belajar</button>
+                        <button class="mode-btn" data-mode="shortBreak">Istirahat Pendek</button>
+                        <button class="mode-btn" data-mode="longBreak">Istirahat Panjang</button>
+                    </div>
+                    <div class="timer-display">
+                        <div class="timer-circle">
+                            <svg class="timer-svg" viewBox="0 0 200 200">
+                                <circle class="timer-bg" cx="100" cy="100" r="90"></circle>
+                                <circle class="timer-progress work" cx="100" cy="100" r="90"></circle>
+                            </svg>
+                            <div class="timer-text">
+                                <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timer-controls">
+                        <button id="pomodoroStart" class="timer-btn start-btn">▶ Mulai</button>
+                        <button id="pomodoroPause" class="timer-btn pause-btn" style="display: none;">⏸ Jeda</button>
+                        <button id="pomodoroReset" class="timer-btn reset-btn">↻ Reset</button>
+                    </div>
+                    <div class="pomodoro-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Sesi Hari Ini</span>
+                            <span id="todaySessions" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sesi Total</span>
+                            <span id="totalSessions" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="timer-status" id="timerStatus">Siap untuk fokus belajar! 🎯</div>
+                </div>
+            </div>
+
+            <!-- Tasks Section -->
+            <div class="dashboard-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="color: white; margin: 0; font-size: 1.3rem;">📋 Tugas Saya</h2>
+                    <a href="/tasks" style="color: white; text-decoration: none; font-weight: 600; padding: 8px 15px; background: rgba(255,255,255,0.2); border-radius: 20px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">Lihat Semua →</a>
+                </div>
+                <div id="tasksSummary" style="background: white; padding: 15px; border-radius: 10px;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 100px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #667eea;" id="taskTotalDash">0</div>
+                            <div style="font-size: 0.85rem; color: #666;">Total</div>
+                        </div>
+                        <div style="flex: 1; min-width: 100px; text-align: center; padding: 10px; background: #fff3e0; border-radius: 8px;">
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #f57c00;" id="taskPendingDash">0</div>
+                            <div style="font-size: 0.85rem; color: #666;">Pending</div>
+                        </div>
+                        <div style="flex: 1; min-width: 100px; text-align: center; padding: 10px; background: #e3f2fd; border-radius: 8px;">
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #1976d2;" id="taskInProgressDash">0</div>
+                            <div style="font-size: 0.85rem; color: #666;">Progress</div>
+                        </div>
+                    </div>
+                    <div id="tasksListDash" style="max-height: 200px; overflow-y: auto;">
+                        <p style="text-align: center; color: #999; margin: 10px 0;">Memuat tugas...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Progress Section -->
+            <div class="dashboard-section">
+                <button id="checkInBtn" style="display: block; margin: 0 auto 15px; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif;">Check In Today</button>
+                <p id="checkInStatus" style="text-align: center; margin-bottom: 15px; color: #555;"></p>
+
+                <div id="progressText">Memuat data...</div>
+
+                <div class="chart-container">
+                    <canvas id="weeklyProgressChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Load config first to avoid redeclaration errors -->
+    <script src="../js/config.js"></script>
+    
+    <script src="../js/pomodoro.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/navbar.js"></script>
+</body>
+
+<!-- OneSignal SDK -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      await OneSignal.init({
+        appId: "95a26ab7-aa13-40c8-9195-65f3534c6aa3",
+        allowLocalhostAsSecureOrigin: true,
+        
+        // ✅ Explicit service worker paths
+        serviceWorkerPath: '/OneSignalSDKWorker.js',
+        serviceWorkerUpdaterPath: '/OneSignalSDKUpdaterWorker.js',
+        
+        // ✅ Service worker params
+        serviceWorkerParam: {
+          scope: '/'
+        }
+      });
+
+      console.log('✅ OneSignal initialized successfully');
+
+      // Show prompt
+      await OneSignal.Slidedown.promptPush();
+
+      // Listen subscription
+      OneSignal.User.PushSubscription.addEventListener('change', async function(event) {
+        if (event.current.optedIn) {
+          const playerId = OneSignal.User.PushSubscription.id;
+          const userId = localStorage.getItem('userId') || 'ibnu';
+          
+          console.log('🔑 Player ID:', playerId);
+          console.log('👤 User ID:', userId);
+          
+          try {
+            const response = await fetch('http://localhost:5001/api/notifications/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                user_id: userId,
+                device_token: playerId
+              })
+            });
+
+            const data = await response.json();
+            console.log('✅ Response:', data);
+
+            if (data.success) {
+              // Custom notification
+              showSuccessNotification();
+              
+              // Send welcome
+              await fetch('http://localhost:5001/api/notifications/welcome', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ user_id: userId })
+              });
+            }
+          } catch (error) {
+            console.error('❌ Error:', error);
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ OneSignal init error:', error);
+      alert('Error initializing notifications: ' + error.message);
+    }
+  });
+
+  // Success notification
+  function showSuccessNotification() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 9999;
+      font-family: Arial, sans-serif;
+      max-width: 350px;
+      animation: slideIn 0.5s ease-out;
+    `;
+    
+    notification.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <div style="font-size: 40px;">🎉</div>
+        <div>
+          <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">
+            Berhasil Diaktifkan!
+          </div>
+          <div style="font-size: 14px; opacity: 0.9;">
+            Kamu akan mendapat pengingat belajar setiap hari jam 09:00 WIB 📚
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.5s ease-in';
+      setTimeout(() => notification.remove(), 500);
+    }, 5000);
+  }
+</script>
+
+<style>
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+</style>
+
+</html>

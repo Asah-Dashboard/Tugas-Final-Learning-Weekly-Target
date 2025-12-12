@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Progres Harian</title>
+    <link rel="stylesheet" href="../css/style.css"/>
+    <style>
+        /* CSS tambahan agar terlihat lebih baik */
+        #logBtn {
+            background: #2ecc71; /* Warna hijau untuk progress */
+        }
+        #logBtn:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Catat Progres Harian Anda</h1>
+        <p>Tekan tombol di bawah setelah Anda menyelesaikan sesi belajar hari ini.</p>
+        
+        <form id="logForm">
+            <div class="form-group">
+                <label for="logNote">Catatan Sesi Belajar Hari Ini:</label>
+                <textarea id="logNote" placeholder="Apa yang sudah dipelajari hari ini? (opsional)" rows="4"></textarea>
+            </div>
+            
+            <!-- Tasks Section -->
+            <div class="tasks-section" id="tasksSection" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; display: none;">
+                <h3 style="margin-top: 0; color: #667eea;">📋 Tugas yang Dikerjakan Hari ini</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Pilih tugas yang sudah diselesaikan saat belajar hari ini:</p>
+                <div id="tasksList" style="max-height: 200px; overflow-y: auto;">
+                    <p style="text-align: center; color: #999;">Memuat tugas...</p>
+                </div>
+            </div>
+            
+            <button type="submit" id="logBtn">✓ Check In - Catat Progres Belajar</button>
+        </form>
+        
+        <div id="statusMessage"></div>
+        
+        <a href="/dashboard" style="text-align: center; display: block; margin-top: 20px;">
+            &larr; Kembali ke Dasbor Progres
+        </a>
+    </div>
+
+    <script src="../js/log_progress.js"></script>
+</body>
+</html>

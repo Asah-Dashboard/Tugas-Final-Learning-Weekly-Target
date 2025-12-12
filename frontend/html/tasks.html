@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Tugas - StudyFlow</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .tasks-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .task-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card.pending {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card.in-progress {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card.completed {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tasks-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .task-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .task-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .task-card.completed {
+            opacity: 0.7;
+            background: #f5f5f5;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+            gap: 15px;
+        }
+
+        .task-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .task-card.completed .task-title {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .task-priority {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .priority-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .status-in_progress {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .task-description {
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .task-due-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .task-due-date.overdue {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #5568d3;
+        }
+
+        .btn-delete {
+            background: #f5576c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #e0455a;
+        }
+
+        .btn-complete {
+            background: #43e97b;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #35d469;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #667eea;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container tasks-container">
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/schedule">Atur Jadwal</a>
+                <a href="/tasks">Tugas</a>
+                <a href="/about">About</a>
+            </div>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </nav>
+
+        <h1>📋 List Tugas Saya</h1>
+
+        <div class="tasks-header">
+            <button class="btn-create" onclick="openCreateModal()">+ Tambah Tugas Baru</button>
+        </div>
+
+        <!-- Task Statistics -->
+        <div class="task-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Total Tugas</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card in-progress">
+                <div class="stat-value" id="statInProgress">0</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card completed">
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterTasks('all')">Semua</button>
+            <button class="filter-btn" onclick="filterTasks('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterTasks('in_progress')">In Progress</button>
+            <button class="filter-btn" onclick="filterTasks('completed')">Completed</button>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="tasks-list" id="tasksList">
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <p>Memuat tugas...</p>
+            </div>
+        </div>
+
+        <!-- Create/Edit Modal -->
+        <div id="taskModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Tambah Tugas Baru</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    <div class="form-group">
+                        <label for="taskTitle">Judul Tugas *</label>
+                        <input type="text" id="taskTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Deskripsi</label>
+                        <textarea id="taskDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Prioritas</label>
+                        <select id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Status</label>
+                        <select id="taskStatus">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate">Tanggal Jatuh Tempo</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
+                        <button type="submit" class="btn-save">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/tasks.js"></script>
+    <script src="../js/navbar.js"></script>
+</body>
+</html>
+
