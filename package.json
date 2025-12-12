@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express-mysql-session": "^3.0.3"
+  }
+}
