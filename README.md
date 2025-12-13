@@ -72,6 +72,7 @@
 - **bcrypt** - Password hashing
 - **express-session** - Session management
 - **node-cron** - Task scheduler
+- **axios v1.6.2** - HTTP client untuk call OneSignal
 - **OneSignal API** - Push notifications
 - **moment-timezone** - Timezone handling
 
@@ -81,6 +82,11 @@
 - **Vanilla JavaScript** - Interaktivitas
 - **Chart.js** - Data visualization
 - **OneSignal SDK** - Push notifications
+
+### Development Tools
+- **VS Code** - Code editor
+- **Thunder Client (VS Code) / Postman** – API testing
+- **phpMyAdmin** – Manajemen database
 
 ## 📁 Struktur Proyek
 
@@ -308,6 +314,10 @@ mysql -u root -p learningweeklytarget < backend/migration_add_dates_to_weekly_ta
 ### Notifications
 - `POST /api/notifications/register` - Register device token
 - `POST /api/notifications/test` - Test notification
+- `POST /api/notifications/trigger` - Manual trigger scheduler
+- `POST /api/notifications/settings` - Toggle notification on/off 
+- `GET /api/notifications/status/:user_id` - Get subscription status
+- `POST /api/notifications/welcome` - Send welcome message
 
 ## 📖 Fitur Detail
 
